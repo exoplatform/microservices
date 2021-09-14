@@ -1,16 +1,17 @@
 package org.exoplatform.microservices;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.picocontainer.Startable;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
+import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.HealthStatusManager;
 import io.grpc.protobuf.services.ProtoReflectionService;
@@ -19,13 +20,16 @@ public class GRPCServer implements Startable {
 
   private static final Log    LOG = ExoLogger.getLogger(GRPCServer.class);
 
+  private PortalContainer     container;
+
   private HealthStatusManager health;
 
   private Server              server;
 
   private int                 port;
 
-  public GRPCServer(InitParams params) {
+  public GRPCServer(PortalContainer container, InitParams params) {
+    this.container = container;
     if (params != null && params.containsKey("port")) {
       this.port = Integer.parseInt(params.getValueParam("port").getValue());
     }
@@ -36,11 +40,18 @@ public class GRPCServer implements Startable {
     try {
       LOG.info("Starting GRPC Server on port: {}", port);
       this.health = new HealthStatusManager();
-      this.server = ServerBuilder.forPort(port)
-                                 .addService(ProtoReflectionService.newInstance())
-                                 .addService(health.getHealthService())
-                                 .build()
-                                 .start();
+      ServerBuilder<?> serverBuilder = ServerBuilder.forPort(port)
+                                                    .addService(ProtoReflectionService.newInstance())
+                                                    .addService(health.getHealthService());
+      List<BindableService> grpcServices = this.container.getComponentInstancesOfType(BindableService.class);
+      if (grpcServices != null) {
+        grpcServices.forEach(grpcService -> {
+          LOG.info("Adding Service {} to gRPC Server", grpcService.getClass().getName());
+          serverBuilder.addService(grpcService);
+        });
+      }
+
+      this.server = serverBuilder.build().start();
       this.health.setStatus("", ServingStatus.SERVING);
       LOG.info("GRPC Server started on port: {}", port);
     } catch (IOException e) {
