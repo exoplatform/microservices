@@ -14,6 +14,7 @@
   <packaging>pom</packaging>
   <name>eXo Microservices - Parent POM</name>
   <modules>
+    <module>microservices-service</module>
     <module>microservices-webapp</module>
     <module>microservices-packaging</module>
   </modules>
@@ -42,6 +43,12 @@
       </dependency>
 
       <!-- Current project artifacts -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>microservices-service</artifactId>
+        <version>${project.version}</version>
+        <scope>provided</scope>
+      </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>microservices-webapp</artifactId>

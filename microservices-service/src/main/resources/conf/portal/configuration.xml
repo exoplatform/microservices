@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+  <component>
+    <type>org.exoplatform.microservices.GRPCServer</type>
+    <init-params>
+      <value-param>
+        <name>port</name>
+        <value>${exo.microservices.grpc.server.port:50051}</value>
+      </value-param>
+    </init-params>
+  </component>
+
+</configuration>

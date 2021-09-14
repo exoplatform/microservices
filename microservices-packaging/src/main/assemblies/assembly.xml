@@ -11,10 +11,24 @@
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>*:*:war</include>
+        <include>${project.groupId}:*:war</include>
       </includes>
       <scope>provided</scope>
       <outputFileNameMapping>${artifact.build.finalName}.war</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>org.exoplatform.gatein.portal:exo.portal.component.microservices-api:jar</include>
+        <include>org.exoplatform.gatein.portal:exo.portal.component.microservices-server:jar</include>
+        <include>org.exoplatform.social:social-component-microservices-api:jar</include>
+        <include>org.exoplatform.social:social-component-microservices-server:jar</include>
+        <include>${project.groupId}:*:jar</include>
+        <include>io.grpc:*:jar</include>
+      </includes>
+      <scope>provided</scope>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
 </assembly>
